@@ -191,73 +191,56 @@ window.addEventListener('DOMContentLoaded', () => {
 		const rd = roomsData[activeRoomIndex]; // 当前房间数据 / Current room data
 		
 		if (rd && rd.chat) {
+			// 检测消息是否包含 @ 提及
+			const mentionRegex = /^@(\S+)\s+/;
+			const mentionMatch = text.match(mentionRegex);
+			const isMention = mentionMatch !== null;
+			const mentionedUser = isMention ? mentionMatch[1] : null;
+			
 			if (images.length > 0) {
 				// 发送包含图片的消息 (支持多图和文字合并)
 				// Send message with images (supports multiple images and text combined)
 				const messageContent = {
 					text: text || '', // 包含文字内容，如果有的话
-					images: images    // 包含所有图片数据
+					images: images,   // 包含所有图片数据
+					mention: mentionedUser || '' // 如果有 @ 提及，包含被提及的用户名
 				};
 
-				if (rd.privateChatTargetId) {
-					// 私聊图片消息加密并发送
-					// Encrypt and send private image message
-					const targetClient = rd.chat.channel[rd.privateChatTargetId];
-					if (targetClient && targetClient.shared) {
-						const clientMessagePayload = {
-							a: 'm',
-							t: 'image_private',
-							d: messageContent
-						};
-						const encryptedClientMessage = rd.chat.encryptClientMessage(clientMessagePayload, targetClient.shared);
-						const serverRelayPayload = {
-							a: 'c',
-							p: encryptedClientMessage,
-							c: rd.privateChatTargetId
-						};
-						const encryptedMessageForServer = rd.chat.encryptServerMessage(serverRelayPayload, rd.chat.serverShared);						rd.chat.sendMessage(encryptedMessageForServer);
-						addMsg(messageContent, false, 'image_private');
-					} else {
-						addSystemMsg(`${t('system.private_message_failed', 'Cannot send private message to')} ${rd.privateChatTargetName}. ${t('system.user_not_connected', 'User might not be fully connected.')}`)
-					}
-				} else {
-					// 公共频道图片消息发送
-					// Send image message to public channel
-					rd.chat.sendChannelMessage('image', messageContent);
-					addMsg(messageContent, false, 'image');
-				}
+				// 图片消息统一作为公开消息发送
+				// Image messages are always sent as public messages
+				rd.chat.sendChannelMessage('image', messageContent);
+				addMsg(messageContent, false, 'image');
 				
 				imagePasteHandler.clearImages(); // 清除所有图片预览
 			} else if (text) {
 				// 发送纯文本消息
 				// Send text-only message
-				if (rd.privateChatTargetId) {
-					// 私聊消息加密并发送
-					// Encrypt and send private message
-					const targetClient = rd.chat.channel[rd.privateChatTargetId];
-					if (targetClient && targetClient.shared) {
-						const clientMessagePayload = {
-							a: 'm',
-							t: 'text_private',
-							d: text
-						};
-						const encryptedClientMessage = rd.chat.encryptClientMessage(clientMessagePayload, targetClient.shared);
-						const serverRelayPayload = {
-							a: 'c',
-							p: encryptedClientMessage,
-							c: rd.privateChatTargetId
-						};
-						const encryptedMessageForServer = rd.chat.encryptServerMessage(serverRelayPayload, rd.chat.serverShared);
-						rd.chat.sendMessage(encryptedMessageForServer);					addMsg(text, false, 'text_private');
-					} else {
-						addSystemMsg(`${t('system.private_message_failed', 'Cannot send private message to')} ${rd.privateChatTargetName}. ${t('system.user_not_connected', 'User might not be fully connected.')}`)
-					}
+				
+				// 如果包含 @ 提及，发送为公开 @ 消息
+				// If contains @ mention, send as public @ message
+				if (isMention) {
+					// 构建包含 @ 提及的消息对象
+					const messageContent = {
+						text: text,
+						mention: mentionedUser
+					};
+					
+					// 发送公开 @ 消息（所有用户都能看到）
+					rd.chat.sendChannelMessage('text_mention', messageContent);
+					addMsg(text, false, 'text_mention');
 				} else {
-					// 公共频道消息发送
-					// Send public message
+					// 普通公开消息
 					rd.chat.sendChannelMessage('text', text);
-					addMsg(text);				}
+					addMsg(text);
+				}
 			}
+			
+			// 发送后清除私信目标状态
+			// Clear private chat target after sending
+			rd.privateChatTargetId = null;
+			rd.privateChatTargetName = null;
+			renderUserList();
+			updateChatInputStyle();
 			
 			// 清空输入框并触发 input 事件
 			// Clear input and trigger input event

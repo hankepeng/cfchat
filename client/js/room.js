@@ -342,13 +342,41 @@ export function handleClientMessage(idx, msg) {
 export function togglePrivateChat(targetId, targetName) {
 	const rd = roomsData[activeRoomIndex];
 	if (!rd) return;
+	
+	// 如果当前已经是同一个目标，则取消
 	if (rd.privateChatTargetId === targetId) {
 		rd.privateChatTargetId = null;
-		rd.privateChatTargetName = null
+		rd.privateChatTargetName = null;
 	} else {
 		rd.privateChatTargetId = targetId;
-		rd.privateChatTargetName = targetName
+		rd.privateChatTargetName = targetName;
 	}
+	
+	// 在输入框中插入 @username
+	const input = document.querySelector('.input-message-input');
+	if (input) {
+		// 移除之前的 @ 提及（如果用户重复点击）
+		let currentText = input.innerText;
+		const atMentionRegex = new RegExp(`@${escapeHTML(rd.privateChatTargetName || '')}\\s*`, 'g');
+		currentText = currentText.replace(atMentionRegex, '');
+		
+		// 插入新的 @ 提及
+		if (rd.privateChatTargetName) {
+			const mentionText = `@${rd.privateChatTargetName} `;
+			input.innerHTML = currentText + escapeHTML(mentionText);
+			
+			// 将光标移到输入框末尾
+			const range = document.createRange();
+			const sel = window.getSelection();
+			range.selectNodeContents(input);
+			range.collapse(false);
+			sel.removeAllRanges();
+			sel.addRange(range);
+			
+			input.focus();
+		}
+	}
+	
 	renderUserList();
 	updateChatInputStyle()
 }

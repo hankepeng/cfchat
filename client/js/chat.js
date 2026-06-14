@@ -107,8 +107,26 @@ export function addMsg(text, isHistory = false, msgType = 'text', timestamp = nu
 		contentHtml = renderFileMessage(text, true);
 		// Add file-bubble class for special timestamp positioning
 		className += ' file-bubble';
+	} else if (msgType === 'text_mention') {
+		// Handle @ mention messages - highlight the @username
+		const mentionRegex = /^@(\S+)\s+/;
+		const highlightedText = text.replace(mentionRegex, (match, username) => {
+			return `<span class="mention-highlight">@${escapeHTML(username)}</span> `;
+		});
+		contentHtml = textToHTML(highlightedText, true); // true to preserve HTML tags
+		className += ' mention-message';
 	} else {
-		contentHtml = textToHTML(text)
+		// 普通文本消息 - 也检测 @ 提及并高亮
+		const mentionRegex = /@(\S+)/g;
+		let processedText = text;
+		if (text.match(mentionRegex)) {
+			processedText = text.replace(mentionRegex, (match, username) => {
+				return `<span class="mention-highlight">@${escapeHTML(username)}</span>`;
+			});
+			contentHtml = textToHTML(processedText, true);
+		} else {
+			contentHtml = textToHTML(text);
+		}
 	}
 	const div = createElement('div', {
 		class: className

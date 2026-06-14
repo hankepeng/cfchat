@@ -32,7 +32,7 @@ const LANGUAGES = {
 			'ui.private_message_to': 'Private Message to',
 			'ui.me': ' (me)',
 			'ui.anonymous': 'Anonymous',
-			'ui.start_private_chat': 'Select for private chat',
+			'ui.start_private_chat': 'Click to mention user',
 			
 			// Settings panel
 			'settings.title': 'Settings',
@@ -119,7 +119,7 @@ const LANGUAGES = {
 			'help.important_note': '⚠️ Important Note',
 			'help.room_isolation_note': 'Same room name but different passwords are two completely independent rooms that cannot communicate with each other.',
 			'help.tip_private_chat': 'Private Chat',
-			'help.tip_private_chat_desc': 'Use complex room names and passwords, share only with specific people',
+			'help.tip_private_chat_desc': 'Click user avatar to mention them in a public message',
 			'help.tip_group_chat': 'Group Chat',
 			'help.tip_group_chat_desc': 'Use simple and memorable room names and passwords for easy multi-user joining',
 			'help.tip_security_reminder': 'Security Reminder',
@@ -153,10 +153,10 @@ const LANGUAGES = {
 			'ui.my_name': '我的名字',
 			'ui.members': '在线成员',
 			'ui.message': '消息',
-			'ui.private_message_to': '私信给',
+			'ui.private_message_to': '正在@',
 			'ui.me': '（我）',
 			'ui.anonymous': '匿名用户',
-			'ui.start_private_chat': '选择用户开始私信',
+			'ui.start_private_chat': '点击头像@用户',
 			
 			// Settings panel
 			'settings.title': '设置',
@@ -191,7 +191,7 @@ const LANGUAGES = {
 			'notification.not_supported': '您的浏览器不支持通知功能。',
 			'notification.allow_browser': '请在浏览器设置中允许通知。',
 			'notification.image': '[图片]',
-			'notification.private': '（私信）',
+			'notification.private': '（提及）',
 			
 			// Actions and menu
 			'action.share': '分享',
@@ -213,8 +213,8 @@ const LANGUAGES = {
 			'system.joined': '加入了对话',
 			'system.left': '离开了对话',
 			'system.secured': '已建立端到端安全连接',
-			'system.private_message_failed': '无法发送私信给',
-			'system.private_file_failed': '无法发送私密文件给',
+			'system.private_message_failed': '无法发送@消息给',
+			'system.private_file_failed': '无法发送带@提及的文件给',
 			'system.user_not_connected': '用户可能未完全连接。',
 			
 			// Help page
@@ -244,8 +244,8 @@ const LANGUAGES = {
 			'help.decentralized_desc': '支持自托管部署，服务器不参与加密解密过程',			'help.usage_tips': '💡 使用技巧',
 			'help.important_note': '⚠️ 重要提示',
 			'help.room_isolation_note': '相同房间名但不同密码的是两个完全独立的房间，无法相互通信。',
-			'help.tip_private_chat': '私人对话',
-			'help.tip_private_chat_desc': '使用复杂的房间名和密码，只分享给特定人员',
+			'help.tip_private_chat': '@ 提及功能',
+			'help.tip_private_chat_desc': '点击用户头像，在消息中@他们，这是一条公开消息',
 			'help.tip_group_chat': '群聊',
 			'help.tip_group_chat_desc': '使用简单易记的房间名和密码，方便多人加入',
 			'help.tip_security_reminder': '安全提醒',

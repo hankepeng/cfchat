@@ -21,14 +21,47 @@ export function escapeHTML(str) {
 
 // Convert text to HTML, preserving line breaks
 // 将文本转换为 HTML，保留换行符
-export function textToHTML(text) {
+export function textToHTML(text, allowHTML = false) {
 	if (typeof text !== 'string') return '';
-	// 先进行 HTML 转义，然后将换行符替换为 <br> 标签
-	// 最后使用 DOMPurify 确保结果是安全的 HTML
-	const escaped = escapeHTML(text);
-	const withLineBreaks = escaped.replace(/\n/g, '<br>');
-	return DOMPurify.sanitize(withLineBreaks, {
-		ALLOWED_TAGS: ['br'], // 只允许 <br> 标签
-		ALLOWED_ATTR: [],     // 不允许任何属性
-	});
+	
+	if (allowHTML) {
+		// 如果允许 HTML，则先保留 HTML 标签，只转义文本内容
+		// 使用临时占位符保护 HTML 标签
+		const tempPlaceholders = [];
+		let result = text;
+		let counter = 0;
+		
+		// 提取 HTML 标签
+		result = result.replace(/<[^>]+>/g, (match) => {
+			const placeholder = `__HTML_PLACEHOLDER_${counter}__`;
+			tempPlaceholders.push(match);
+			counter++;
+			return placeholder;
+		});
+		
+		// 转义剩余的文本内容
+		result = escapeHTML(result);
+		
+		// 恢复 HTML 标签（使用 DOMPurify 清理）
+		tempPlaceholders.forEach((tag, index) => {
+			result = result.replace(`__HTML_PLACEHOLDER_${index}__`, tag);
+		});
+		
+		// 替换换行符
+		result = result.replace(/\n/g, '<br>');
+		
+		// 使用 DOMPurify 清理，只允许 <br> 和 <span class="mention-highlight"> 标签
+		return DOMPurify.sanitize(result, {
+			ALLOWED_TAGS: ['br', 'span'],
+			ALLOWED_ATTR: ['class'],
+		});
+	} else {
+		// 原有逻辑：完全转义
+		const escaped = escapeHTML(text);
+		const withLineBreaks = escaped.replace(/\n/g, '<br>');
+		return DOMPurify.sanitize(withLineBreaks, {
+			ALLOWED_TAGS: ['br'],
+			ALLOWED_ATTR: [],
+		});
+	}
 }

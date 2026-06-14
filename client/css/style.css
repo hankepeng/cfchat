@@ -2021,3 +2021,78 @@ flex-direction: column;
 h2{
 	margin: 0%;
 }
+
+/* @ Mention highlight styles */
+/* @ 提及高亮样式 */
+.mention-highlight {
+	color: #007bff;
+	font-weight: 600;
+	background: rgba(0, 123, 255, 0.1);
+	padding: 2px 4px;
+	border-radius: 3px;
+	margin-right: 2px;
+	transition: all 0.2s ease;
+}
+
+.mention-highlight:hover {
+	background: rgba(0, 123, 255, 0.2);
+	color: #0056b3;
+}
+
+/* Mention message style */
+/* @ 提及消息样式 */
+.bubble.mention-message {
+	border-left: 3px solid #007bff;
+	padding-left: 8px;
+	margin-left: 2px;
+}
+
+/* Input field mention indicator */
+/* 输入框 @ 提及指示器 */
+.input-message-input:has(.mention-highlight) {
+	color: #007bff;
+}
+
+/* Responsive mention styles */
+/* 响应式 @ 提及样式 */
+@media (max-width: 768px) {
+	.mention-highlight {
+		font-size: 14px;
+		padding: 1px 3px;
+	}
+	
+	.bubble.mention-message {
+		border-left-width: 2px;
+		padding-left: 6px;
+	}
+}
+
+@media (max-width: 480px) {
+	.mention-highlight {
+		font-size: 13px;
+		padding: 1px 2px;
+	}
+	
+	.bubble.mention-message {
+		border-left-width: 2px;
+		padding-left: 4px;
+	}
+}
+
+/* Dark mode mention styles */
+/* 深色模式 @ 提及样式 */
+@media (prefers-color-scheme: dark) {
+	.mention-highlight {
+		color: #4dabf7;
+		background: rgba(77, 171, 247, 0.15);
+	}
+	
+	.mention-highlight:hover {
+		background: rgba(77, 171, 247, 0.25);
+		color: #74c0fc;
+	}
+	
+	.bubble.mention-message {
+		border-left-color: #4dabf7;
+	}
+}
